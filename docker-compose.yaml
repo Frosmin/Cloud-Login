@@ -1,33 +1,27 @@
-name: python-app
-
+version: '3.8'
 services:
-    postgres:
-      image: postgres
-      restart: always
-      # set shared memory limit when using docker-compose
-      shm_size: 128mb
-      # or set shared memory limit when deploy via swarm stack
-      #volumes:
-      #  - type: tmpfs
-      #    target: /dev/shm
-      #    tmpfs:
-      #      size: 134217728 # 128*2^20 bytes = 128Mb
-      ports: 
-       - 5432:5432
-      environment:
-        POSTGRES_PASSWORD: pepe
-        POSTGRES_USER: simon
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: pepe
+      POSTGRES_USER: simon
+      POSTGRES_DB: simonDB
 
-    adminer:
-      image: adminer
-      restart: always
-      ports:
-        - 8080:8080
-    python:
-      build: ./cloud
-      ports: 
-        - 8000:8000
-      stdin_open: true
-      tty: true  
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
+  python:
+    build: ./cloud
+    ports: 
+      - 8000:8000
+    stdin_open: true
+    tty: true  
+    depends_on:
+      - postgres
+    restart: on-failure
+
 volumes:
   data:
